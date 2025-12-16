@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSense - India's Leading Agri-Tech Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7fbee; /* Very light subtle green/off-white */
+            transition: margin-left 0.3s;
+        }
+
+        /* Header & Primary Background */
+        #main-header {
+            background-color: #044e33;
+            height:75px;
+            box-shadow: 0 4px 10px rgba(4, 78, 51, 0.4); /* Green shadow */
+        }
+        
+        /* Highlight Color (Teal) */
+        .text-teal { color: #14b8a6; }
+        .bg-teal { background-color: #14b8a6; }
+        .hover\:bg-teal-dark:hover { background-color: #0d9488; }
+        .border-teal { border-color: #14bb86; }
+
+        /* 3. Padding/Margin Fixes: Consistent global padding for pages */
+        .page-content {
+            min-height: calc(100vh - 80px); 
+            padding: 2.5rem 1rem;
+            max-width: 100%;
+        }
+        .max-w-7xl {
+             padding: 0 1rem;
+        }
+        @media (min-width: 640px) {
+            .page-content {
+                padding: 4rem 2rem; /* Increased padding for spacious feel */
+            }
+        }
+        
+        /* 5. Navbar Link Sizing */
+        .nav-link {
+            white-space: nowrap;
+            padding: 0.5rem 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* MODERN CARD AESTHETIC */
+        .card {
+            border-radius: 0.75rem;
+            border: 1px solid #e5e7eb;
+            background-color: white; /* Ensure cards are white for contrast */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Language Selector Professional Fix */
+        #language-select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%23d1fae5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            padding-right: 2.5rem;
+            background-color: #033f2a; /* Darker green */
+            border: 1px solid #14b8a6;
+        }
+
+        /* --- HOME PAGE VIDEO BACKGROUND & MINIMALIST TEXT --- */
+        .hero-section {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: 0;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            /* Deeper, less transparent overlay for text clarity on video */
+            background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%;
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+
+        /* Modern Text Shadow for Clarity */
+        .text-shadow-strong {
+            text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Navbar Active Link (Subtle Highlight) */
+        .nav-link.active {
+            font-weight: 600;
+            color: #14b8a6; /* Teal highlight */
+            border-bottom: 3px solid #14b8a6;
+            text-shadow: none;
+        }
+
+
+        /* 6. Dynamic Auth Page Styling (Minimalist Look) */
+        .auth-form-card {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+            border-radius: 0.75rem;
+            overflow: hidden;
+            border: 1px solid #e5e7eb;
+        }
+        .auth-visual-panel {
+            background-image: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); /* Teal gradient */
+            border-radius: 0; 
+            color: #ecfdf5;
+            padding: 2.5rem;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .dynamic-auth-form {
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        /* Animated Scroll Down Indicator */
+        @keyframes bounce-scroll {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            40% {
+                transform: translateY(-10px);
+                opacity: 0.8;
+            }
+            60% {
+                transform: translateY(-5px);
+                opacity: 0.9;
+            }
+        }
+        .scroll-indicator {
+            animation: bounce-scroll 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        setLogLevel('Debug');
+
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-agrobuddy-corp';
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let userId = null;
+        window.db = db; 
+        window.auth = auth;
+        let isAppInitialized = false;
+
+        const getBasePath = (uid) => `/artifacts/${appId}/public/data/soil_data`;
+        const getProfilePath = (uid) => `/artifacts/${appId}/users/${uid}/profile`;
+
+        // Authentication and Initialization 
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+            } else {
+                try {
+                    if (typeof __initial_auth_token !== 'undefined') {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    userId = auth.currentUser.uid;
+                } catch (error) {
+                    console.error("Firebase Auth Error:", error);
+                    userId = crypto.randomUUID(); 
+                }
+            }
+            
+            const shortUserId = userId.substring(0, 8);
+            const userEmail = user ? user.email || 'Anonymous User' : 'Guest Session';
+            
+            document.getElementById('user-id-display').textContent = `User Ref: ${shortUserId}...`;
+            document.getElementById('user-id-sidebar').textContent = document.getElementById('user-id-display').textContent;
+            
+            const profileName = document.getElementById('profile-name');
+            const profileEmail = document.getElementById('profile-email');
+            const profileUid = document.getElementById('profile-uid');
+            if (profileName) profileName.textContent = userEmail;
+            if (profileEmail) profileEmail.textContent = userEmail;
+            if (profileUid) profileUid.textContent = userId;
+
+            if (!isAppInitialized) {
+                isAppInitialized = true;
+                if (window.initApp) {
+                     window.initApp(); 
+                }
+            } else if (user && window.currentPage === 'auth-page') {
+                 window.showPage('dashboard-page');
+            }
+        });
+
+        // Simulating Real-time Sensor Data Fetch
+        window.startDataListener = () => {
+            if (!db || !userId) {
+                console.warn("Firestore or User ID not available yet.");
+                return;
+            }
+
+            const soilDataDocRef = doc(db, getBasePath(userId), 'latest_readings');
+
+            onSnapshot(soilDataDocRef, (docSnap) => {
+                const initialData = { pH: 7.0, moisture: 45, NPK: "Optimal N/P/K", EC: 0.8 };
+                if (docSnap.exists() && docSnap.data().soilData) {
+                    window.updateDashboard(docSnap.data().soilData, docSnap.data().timestamp);
+                } else {
+                    console.log("No live soil data found. Using default simulation data.");
+                    window.updateDashboard(initialData, new Date().toLocaleString());
+                }
+            }, (error) => {
+                console.error("Firestore listen error:", error);
+                document.getElementById('status-message').textContent = 'Error fetching live data.';
+            });
+
+            // Set up listener for user profile (for preferred language)
+            const profileDocRef = doc(db, getProfilePath(userId), 'preferences');
+            onSnapshot(profileDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const { preferredLanguage } = docSnap.data();
+                    if (preferredLanguage) {
+                        const selector = document.getElementById('language-select');
+                        if (selector.value !== preferredLanguage) {
+                            selector.value = preferredLanguage;
+                            window.handleLanguageChange(preferredLanguage);
+                        }
+                    }
+                } else {
+                    setDoc(profileDocRef, { preferredLanguage: 'en-US' }, { merge: true });
+                }
+            });
+        };
+
+        // Function to save the preferred language
+        window.savePreferredLanguage = async (langCode) => {
+            if (!db || !userId) return;
+            try {
+                const profileDocRef = doc(db, getProfilePath(userId), 'preferences');
+                await setDoc(profileDocRef, { preferredLanguage: langCode }, { merge: true });
+                console.log(`Preferred language saved: ${langCode}`);
+            } catch (e) {
+                console.error("Error saving language preference:", e);
+            }
+        }
+
+        // --- AUTHENTICATION FUNCTIONS (Firebase Integration) ---
+        
+        window.handleAuth = async (event, mode) => {
+            event.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const messageElement = document.getElementById('auth-message');
+            messageElement.textContent = 'Processing...';
+            messageElement.className = 'text-center mt-4 text-amber-600 font-semibold dynamic-auth-form';
+            
+            if (!email || !password) {
+                 messageElement.textContent = 'Email and password are required.';
+                 messageElement.className = 'text-center mt-4 text-red-600 font-semibold dynamic-auth-form';
+                 return;
+            }
+
+            try {
+                if (mode === 'signup') {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                    messageElement.textContent = 'Signup successful! Redirecting to dashboard...';
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    messageElement.textContent = 'Login successful! Redirecting to dashboard...';
+                }
+                messageElement.className = 'text-center mt-4 text-teal-600 font-semibold dynamic-auth-form';
+            } catch (error) {
+                messageElement.textContent = `Error: ${error.message.substring(0, 50)}...`;
+                messageElement.className = 'text-center mt-4 text-red-600 font-semibold dynamic-auth-form';
+                console.error("Auth Error:", error);
+            }
+        };
+
+        window.toggleAuthMode = (mode) => {
+            const form = document.getElementById('auth-form');
+            const title = document.getElementById('auth-title');
+            const submitButton = document.getElementById('auth-submit-button');
+            const switchLink = document.getElementById('auth-switch-link');
+            const messageElement = document.getElementById('auth-message');
+            const formContainer = document.querySelector('#auth-page .p-8');
+            
+            // Dynamic Transitions: Apply fade out/in effect
+            formContainer.classList.remove('dynamic-auth-form');
+            void formContainer.offsetWidth; // Trigger reflow
+            formContainer.classList.add('dynamic-auth-form');
+
+            messageElement.textContent = '';
+            
+            if (mode === 'signup') {
+                title.textContent = 'Create AgroSense Account';
+                submitButton.textContent = 'Sign Up';
+                form.onsubmit = (e) => window.handleAuth(e, 'signup');
+                switchLink.innerHTML = 'Already have an account? <span class="text-teal hover:bg-teal-dark font-bold">Sign In</span>';
+                switchLink.onclick = () => window.toggleAuthMode('login');
+            } else {
+                title.textContent = 'Sign In to AgroSense';
+                submitButton.textContent = 'Sign In';
+                form.onsubmit = (e) => window.handleAuth(e, 'login');
+                switchLink.innerHTML = 'Need an account? <span class="text-teal hover:bg-teal-dark font-bold">Sign Up</span>';
+                switchLink.onclick = () => window.toggleAuthMode('signup');
+            }
+        };
+
+        
+    </script>
+    
+    <div id="sidebar" class="fixed top-0 left-0 w-64 h-full bg-gray-900 text-white shadow-2xl p-6 flex flex-col space-y-4 transform md:hidden z-50">
+        <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+            <h2 class="text-xl font-bold text-teal">AgroSense Menu</h2>
+            <button onclick="toggleSidebar()" class="text-gray-300 hover:text-white transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        
+        <a href="#home" onclick="showPage('home'); toggleSidebar();" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-800 transition">
+            <i data-lucide="home" class="w-5 h-5 mr-3 text-white"></i>
+            <span class="font-semibold">Home</span>
+        </a>
+        <a href="#dashboard-page" onclick="showPage('dashboard-page'); toggleSidebar();" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-800 transition">
+            <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3 text-teal"></i>
+            <span class="font-semibold">Intelligence</span>
+        </a>
+        <a href="#iot-console-page" onclick="showPage('iot-console-page'); toggleSidebar();" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-800 transition">
+             <i data-lucide="plug-zap" class="w-5 h-5 mr-3 text-red-500"></i>
+            <span class="font-semibold">IoT Console</span>
+        </a>
+        <a href="#finance-page" onclick="showPage('finance-page'); toggleSidebar();" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-800 transition">
+            <i data-lucide="banknote" class="w-5 h-5 mr-3 text-amber-400"></i>
+            <span class="font-semibold">Finance</span>
+        </a>
+         <a href="#tools-page" onclick="showPage('tools-page'); toggleSidebar();" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-800 transition">
+            <i data-lucide="wrench" class="w-5 h-5 mr-3 text-indigo-400"></i>
+            <span class="font-semibold">Tools</span>
+        </a>
+        <a href="#profile-page" onclick="showPage('profile-page'); toggleSidebar();" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-800 transition">
+            <i data-lucide="user-circle" class="w-5 h-5 mr-3 text-cyan-400"></i>
+            <span class="font-semibold">Profile</span>
+        </a>
+        <a href="#about-page" onclick="showPage('about-page'); toggleSidebar();" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-800 transition">
+            <i data-lucide="globe" class="w-5 h-5 mr-3 text-gray-400"></i>
+            <span class="font-semibold">Our Vision</span>
+        </a>
+        <a href="#auth-page" onclick="showPage('auth-page'); toggleAuthMode('login'); toggleSidebar();" class="sidebar-link flex items-center p-3 rounded-lg hover:bg-gray-800 transition font-bold text-teal">
+            <i data-lucide="log-in" class="w-5 h-5 mr-3 text-teal"></i>
+            <span class="font-semibold">Sign In / Register</span>
+        </a>
+        <div class="mt-auto pt-4 border-t border-gray-700">
+             <p id="user-id-sidebar" class="text-xs text-gray-400">User Ref: Loading...</p>
+        </div>
+    </div>
+    <div id="backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/70 backdrop hidden md:hidden z-40"></div>
+
+
+    <header id="main-header" class="p-4 sticky top-0 z-20">
+        <div class="max-w-7xl mx-auto flex justify-between items-center px-4 md:px-0">
+            
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleSidebar()" class="text-white hover:text-teal md:hidden transition">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+                
+                <a href="#home" onclick="showPage('home')" class="flex items-center space-x-2">
+                    <i data-lucide="sparkles" class="w-7 h-7 text-teal"></i>
+                    <h1 class="text-2xl md:text-3xl font-extrabold text-white">Soil & Soul</h1>
+                </a>
+            </div>
+            
+            <nav class="hidden md:flex space-x-2 text-white font-medium text-sm lg:text-base">
+                <a href="#home" onclick="showPage('home')" class="hover:text-teal transition nav-link p-2 border-b-2 border-transparent" data-page="home">Home</a>
+                <a href="#dashboard-page" onclick="showPage('dashboard-page')" class="hover:text-teal transition nav-link p-2 border-b-2 border-transparent" data-page="dashboard-page">Intelligence</a>
+                <a href="#iot-console-page" onclick="showPage('iot-console-page')" class="hover:text-teal transition nav-link p-2 border-b-2 border-transparent" data-page="iot-console-page">IoT Console</a>
+                <a href="#finance-page" onclick="showPage('finance-page')" class="hover:text-teal transition nav-link p-2 border-b-2 border-transparent" data-page="finance-page">Finance</a>
+                <a href="#tools-page" onclick="showPage('tools-page')" class="hover:text-teal transition nav-link p-2 border-b-2 border-transparent" data-page="tools-page">Tools</a>
+                <a href="#profile-page" onclick="showPage('profile-page')" class="hover:text-teal transition nav-link p-2 border-b-2 border-transparent" data-page="profile-page">Profile</a>
+                <a href="#about-page" onclick="showPage('about-page')" class="hover:text-teal transition nav-link p-2 border-b-2 border-transparent" data-page="about-page">Vision</a>
+                <a href="#auth-page" onclick="showPage('auth-page'); toggleAuthMode('login');" class="bg-teal hover:bg-teal-dark text-gray-900 font-bold py-2 px-4 rounded-lg transition duration-300 transform nav-link text-sm ml-4" data-page="auth-page">Sign In</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <div class="relative inline-block hidden lg:block">
+                    <select id="language-select" onchange="handleLanguageChange(this.value)" class="text-white font-semibold py-2 px-4 rounded-lg focus:ring-2 focus:ring-teal focus:outline-none transition hover:bg-opacity-80">
+                        <option value="en-US">English</option>
+                        <option value="hi-IN">हिन्दी (Hindi)</option>
+                        <option value="mr-IN">मराठी (Marathi)</option>
+                        <option value="te-IN">తెలుగు (Telugu)</option>
+                        <option value="ta-IN">தமிழ் (Tamil)</option>
+                        <option value="gu-IN">ગુજરાતી (Gujarati)</option>
+                        <option value="bn-IN">বাংলা (Bengali)</option>
+                        <option value="pa-IN">ਪੰਜਾਬੀ (Punjabi)</option>
+                        <option value="kn-IN">ಕನ್ನಡ (Kannada)</option>
+                        <option value="ml-IN">മലയാളം (Malayalam)</option>
+                        <option value="or-IN">ଓଡ଼ିଆ (Odia)</option>
+                        <option value="ur-IN">اردو (Urdu)</option>
+                        <option value="as-IN">অসমীয়া (Assamese)</option>
+                        <option value="ne-IN">नेपाली (Nepali)</option>
+                        <option value="ks-IN">کٲشُر (Kashmiri)</option>
+                        <option value="sd-IN">سنڌي (Sindhi)</option>
+                        <option value="sa-IN">संस्कृतम् (Sanskrit)</option>
+                        <option value="bho-IN">भोजपुरी (Bhojpuri)</option>
+                        <option value="raj-IN">राजस्थानी (Rajasthani)</option>
+                        <option value="har-IN">हरियाणवी (Haryanvi)</option>
+                        <option value="mag-IN">मगही (Magahi)</option>
+                        <option value="awa-IN">अवधी (Awadhi)</option>
+                        <option value="chg-IN">छत्तीसगढ़ी (Chhattisgarhi)</option>
+                        <option value="tulu-IN">ತುಳು (Tulu)</option>
+                        <option value="kok-IN">कोंकणी (Konkani)</option>
+                        <option value="doi-IN">डोगरी (Dogri)</option>
+                        <option value="mai-IN">मैथिली (Maithili)</option>
+                        <option value="sat-IN">ᱥᱟᱱᱛᱟᱲᱤ (Santali)</option>
+                    </select>
+                </div>
+                
+                <p id="user-id-display" class="text-sm text-gray-300 hidden lg:block">User Ref: Loading...</p>
+            </div>
+        </div>
+    </header>
+
+    <div id="content-container" class="flex-grow">
+        
+        <section id="auth-page" class="auth-container hidden w-full p-4 md:p-12 min-h-screen flex items-center justify-center">
+            <div class="auth-form-card grid grid-cols-1 md:grid-cols-2 max-w-5xl w-full mx-auto bg-white">
+                
+                <div class="p-8 sm:p-12">
+                    <h2 id="auth-title" class="text-3xl font-extrabold text-gray-800 mb-8 text-center border-b pb-3">Sign In to AgroSense</h2>
+                    
+                    <form id="auth-form" onsubmit="window.handleAuth(event, 'login')" class="space-y-6 dynamic-auth-form">
+                        
+                        <label class="block">
+                            <span class="text-gray-700 font-semibold flex items-center mb-1">
+                                <i data-lucide="mail" class="w-5 h-5 mr-2 text-teal"></i> Email Address
+                            </span>
+                            <input id="auth-email" type="email" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-teal focus:border-teal transition" placeholder="you@farm.com" required>
+                        </label>
+
+                        <label class="block">
+                            <span class="text-gray-700 font-semibold flex items-center mb-1">
+                                <i data-lucide="lock" class="w-5 h-5 mr-2 text-teal"></i> Password
+                            </span>
+                            <input id="auth-password" type="password" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-teal focus:border-teal transition" placeholder="••••••••" required>
+                        </label>
+                        
+                        <button id="auth-submit-button" type="submit" class="w-full bg-teal hover:bg-teal-dark text-white font-bold py-3 px-4 rounded-lg transition duration-300 shadow-lg transform hover:scale-[1.005]">
+                            Sign In
+                        </button>
+                        
+                        <p id="auth-message" class="text-center mt-4 text-red-600 font-semibold dynamic-auth-form"></p>
+
+                        <p id="auth-switch-link" class="text-center text-sm text-gray-600 cursor-pointer pt-4 border-t border-gray-200" onclick="window.toggleAuthMode('signup')">
+                                Need an account? <span class="text-teal hover:text-teal-dark font-bold">Sign Up</span>
+                        </p>
+                    </form>
+                </div>
+                
+                <div class="auth-visual-panel hidden md:flex flex-col space-y-8 justify-center p-12">
+                    <h3 class="text-3xl font-extrabold text-white drop-shadow-md">Precision. Intelligence. Growth.</h3>
+                    
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4">
+                            <i data-lucide="database" class="w-6 h-6 text-white"></i>
+                            <p class="font-semibold text-lg text-white">Real-Time IoT Data Access</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i data-lucide="speech" class="w-6 h-6 text-white"></i>
+                            <p class="font-semibold text-lg text-white">Multilingual AI Voice Commands</p>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <i data-lucide="shield" class="w-6 h-6 text-white"></i>
+                            <p class="font-semibold text-lg text-white">Audited Data Security (F06 Audit)</p>
+                        </div>
+                    </div>
+                    <p class="text-sm italic text-teal-100 mt-auto pt-6 border-t border-teal-300 border-opacity-30">AgroSense: Innovate. Integrate. Sustain.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="home" class="hero-section min-h-[70vh] md:min-h-screen flex items-center justify-center text-center">
+             <video autoplay muted loop id="video-bg" poster="https://images.unspla`sh.com/photo-1570761159677-f2730623a85b"> -->
+                <source src="../stuff/mixkit-woman-looking-at-farm-fields-36984-hd-ready.mp4" type="video/mp4">
+            </video>
+            
+            <div class="hero-overlay"></div>
+            
+            <div class="relative z-10 p-6 max-w-6xl mx-auto">
+                
+                <h2 class="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-white mb-6 text-shadow-strong leading-tight">
+                    <span class="text-teal-400">PRECISION.</span> YIELD.
+                </h2>
+                
+                <p class="text-lg md:text-2xl text-gray-300 mb-10 font-light max-w-xl mx-auto opacity-90">
+                    AI-Driven Diagnostics for Indian Agriculture.
+                </p>
+
+                <a href="#dashboard-page" onclick="showPage('dashboard-page')" 
+                   class="inline-flex items-center justify-center bg-teal hover:bg-teal-dark text-gray-900 font-extrabold text-xl py-4 px-12 rounded-full shadow-2xl transition duration-300 transform hover:scale-[1.05] tracking-wider border-2 border-teal-200"
+                   style="min-width: 300px;">
+                    START ANALYZING <i data-lucide="arrow-right" class="w-6 h-6 inline ml-4"></i>
+                </a>
+                
+                <div class="mt-20 flex justify-center">
+                    <i data-lucide="chevrons-down" class="w-10 h-10 text-teal-200 scroll-indicator"></i>
+                </div>
+
+            </div>
+        </section>
+        
+        <section id="dashboard-page" class="page-content hidden bg-f7fbee">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 id="main-heading" class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-12 text-center border-b-4 border-teal pb-4">
+                    Real-Time Soil Intelligence Dashboard
+                </h2>
+                
+                <div id="status-message" class="text-center mb-8 text-lg font-medium text-red-600">
+                    Connecting to device... Please wait for secure authentication.
+                </div>
+
+                <div id="sensor-cards-container" class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                    <div class="card bg-white p-6 rounded-xl border-l-4 border-lime-500 flex flex-col items-center">
+                        <i data-lucide="droplet" class="w-8 h-8 text-lime-600 mb-3"></i>
+                        <p id="label-ph" class="text-sm font-medium text-gray-500">Soil pH</p>
+                        <p id="value-ph" class="text-4xl md:text-5xl font-extrabold text-lime-700 mt-1">--</p>
+                        <p id="desc-ph" class="text-xs text-gray-400 mt-2 text-center">Acidity/Alkalinity</p>
+                    </div>
+                    <div class="card bg-white p-6 rounded-xl border-l-4 border-cyan-500 flex flex-col items-center">
+                        <i data-lucide="cloud-rain" class="w-8 h-8 text-cyan-600 mb-3"></i>
+                        <p id="label-moisture" class="text-sm font-medium text-gray-500">Moisture (%)</p>
+                        <p id="value-moisture" class="text-4xl md:text-5xl font-extrabold text-cyan-700 mt-1">--</p>
+                        <p id="desc-moisture" class="text-xs text-gray-400 mt-2 text-center">Volumetric Water Content</p>
+                    </div>
+                    <div class="card bg-white p-6 rounded-xl border-l-4 border-amber-500 flex flex-col items-center">
+                        <i data-lucide="zap" class="w-8 h-8 text-amber-600 mb-3"></i>
+                        <p id="label-npk" class="text-sm font-medium text-gray-500">NPK Status</p>
+                        <p id="value-npk" class="text-3xl font-bold text-amber-700 mt-1 h-10 flex items-center justify-center">--</p> 
+                        <p id="desc-npk" class="text-xs text-gray-400 mt-2 text-center">N, P, K</p>
+                    </div>
+                     <div class="card bg-white p-6 rounded-xl border-l-4 border-red-500 flex flex-col items-center">
+                        <i data-lucide="salt" class="w-8 h-8 text-red-600 mb-3"></i>
+                        <p class="text-sm font-medium text-gray-500">EC (dS/m)</p>
+                        <p id="value-ec" class="text-4xl md:text-5xl font-extrabold text-red-700 mt-1">--</p>
+                        <p class="text-xs text-gray-400 mt-2 text-center">Conductivity</p>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                    <div class="bg-gray-800 p-4 rounded-xl shadow-xl border-l-4 border-teal text-white">
+                        <h4 class="font-bold text-sm text-teal flex items-center"><i data-lucide="scan-line" class="w-4 h-4 mr-2"></i> NDVI Status (F17)</h4>
+                        <p id="ndvi-status" class="text-lg font-bold mt-1 text-white">Zone B: Optimal Health (NDVI 0.82)</p>
+                        <p class="text-xs text-gray-400">Last Scan: 12 hours ago</p>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl shadow-xl border-l-4 border-red-500 text-white">
+                        <h4 class="font-bold text-sm text-red-400 flex items-center"><i data-lucide="activity-square" class="w-4 h-4 mr-2"></i> Anomaly Alert (F19)</h4>
+                        <p id="anomaly-log" class="text-lg font-bold mt-1 text-amber-400">ALERT: Soil Moist. Drop (-15%) at Field A1.</p>
+                        <p class="text-xs text-gray-400">Critical warning issued 5 mins ago.</p>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-xl shadow-xl border-l-4 border-cyan-400 text-white flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-sm text-cyan-400 flex items-center"><i data-lucide="cloud-lightning" class="w-4 h-4 mr-2"></i> Local Weather (F13)</h4>
+                            <p class="text-lg font-bold mt-1 text-white">29°C | 5% Rain Risk</p>
+                            <p class="text-xs text-gray-400">Tomorrow: Partly Cloudy</p>
+                        </div>
+                        <button onclick="showWeatherModal()" class="bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-semibold py-1 px-3 rounded-full transition">View 7-Day</button>
+                    </div>
+                </div>
+
+                <div class="card bg-white p-8 rounded-xl border-b-8 border-teal mb-12 shadow-xl">
+                    <h3 id="recommendation-heading" class="text-3xl font-bold text-gray-800 mb-6 flex items-center">
+                        <i data-lucide="brain" class="w-8 h-8 mr-3 text-teal"></i>
+                        <span id="label-recommendation">AI Optimization Command</span>
+                    </h3>
+                    <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+                        <div id="recommendation-icon" class="flex-shrink-0 w-28 h-28 bg-teal-50 rounded-full flex items-center justify-center p-4 shadow-inner">
+                            <i data-lucide="shield-check" class="w-16 h-16 text-teal"></i>
+                        </div>
+                        <p id="recommendation-text" class="text-2xl font-semibold text-gray-700 text-center md:text-left flex-grow">
+                            Optimal Soil Health Detected. Maintain current irrigation cycle. Predictive models suggest low risk of nutrient deficiency for the next 7 days.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card bg-gray-900 p-8 rounded-xl text-white text-center shadow-2xl">
+                    <h3 id="voice-heading" class="text-3xl font-bold mb-4 text-teal">Voice Control Interface</h3>
+                    <p id="voice-subtext" class="mb-6 text-gray-400">Activate command mode and speak your query in any supported language for instant analysis and results.</p>
+                    <button id="voice-button" onclick="toggleVoiceCommand()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-5 px-6 rounded-full shadow-2xl transition duration-200 focus:outline-none focus:ring-4 focus:ring-red-400 transform hover:scale-110 active:scale-95 flex items-center justify-center mx-auto w-32 h-32">
+                        <i data-lucide="mic-vocal" class="w-14 h-14"></i>
+                    </button>
+                    <p id="voice-output" class="mt-6 text-2xl font-semibold min-h-8 text-teal">Awaiting Command.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="iot-console-page" class="page-content hidden bg-f7fbee">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                 <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-12 text-center border-b-4 border-red-500 pb-4">
+                    IoT Data Console: Core Device Telemetry
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                    <div class="card bg-white p-6 rounded-xl border-l-4 border-red-500">
+                        <h3 class="font-bold text-xl mb-3 text-red-700 flex items-center"><i data-lucide="thermometer" class="w-5 h-5 mr-2"></i> Live Air Telemetry (F7)</h3>
+                        <p class="text-3xl font-extrabold text-gray-800">30.5°C</p>
+                        <p class="text-xl text-gray-600">55% Humidity</p>
+                        <p class="text-xs text-gray-500 mt-2">External readings updated every 60s.</p>
+                    </div>
+                    <div class="card bg-white p-6 rounded-xl border-l-4 border-red-500">
+                        <h3 class="font-bold text-xl mb-3 text-red-700 flex items-center"><i data-lucide="database" class="w-5 h-5 mr-2"></i> Data Redundancy (F8)</h3>
+                        <p id="backup-status" class="text-xl font-bold text-teal">Last Backup: Complete</p>
+                        <button onclick="forceBackup()" class="mt-4 w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition transform hover:scale-[1.01]">
+                            Force Immediate Backup
+                        </button>
+                    </div>
+                    <div class="card bg-white p-6 rounded-xl border-l-4 border-red-500">
+                           <h3 class="font-bold text-xl mb-3 text-red-700 flex items-center"><i data-lucide="battery-low" class="w-5 h-5 mr-2"></i> Power Mode (F10)</h3>
+                        <div class="flex justify-between items-center mt-3">
+                            <span class="text-lg font-bold text-gray-800">Low-Power Mode:</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="power-mode-toggle" onchange="togglePowerMode(this.checked)" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                            </label>
+                        </div>
+                           <p id="power-mode-desc" class="text-xs text-gray-500 mt-2">Current: Standard Performance</p>
+                    </div>
+                </div>
+
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    
+                    <div class="space-y-8">
+                        <h3 class="text-2xl font-extrabold text-gray-700 border-b-2 pb-2">Data Integrity & Auditing</h3>
+                        
+                        <div class="card bg-white p-8 rounded-xl border-t-4 border-amber-500">
+                            <h4 class="text-xl font-bold text-amber-700 mb-4 flex items-center"><i data-lucide="ruler" class="w-5 h-5 mr-2"></i> Sensor Calibration (F6) / Audit (F06 Audit)</h4>
+                            <p class="text-sm text-gray-600 mb-4">Apply offset values based on Lab Test cross-validation.</p>
+                            <label class="block mb-3">
+                                <span class="text-gray-700 font-semibold">pH Offset (+/-):</span>
+                                <input type="number" id="ph-offset" step="0.05" value="0.00" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-amber-500 focus:border-amber-500 transition">
+                            </label>
+                            <label class="block mb-4">
+                                <span class="text-gray-700 font-semibold">EC Multiplier (x):</span>
+                                <input type="number" id="ec-multiplier" step="0.01" value="1.00" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-amber-500 focus:border-amber-500 transition">
+                            </label>
+                            <div class="flex space-x-4">
+                                <button onclick="saveCalibration()" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-lg transition transform hover:scale-[1.01]">
+                                    Save Calibration
+                                </button>
+                                <button onclick="runCalibrationAudit()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-3 rounded-lg transition transform hover:scale-[1.01]">
+                                    Run Audit (Accuracy)
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card bg-white p-8 rounded-xl border-t-4 border-teal">
+                             <h4 class="text-xl font-bold text-teal-700 mb-4 flex items-center"><i data-lucide="map-pin" class="w-5 h-5 mr-2"></i> Multi-Field GPS Data Log (F3)</h4>
+                             <label class="block mb-4">
+                                 <span class="text-gray-700 font-semibold">Select Field ID:</span>
+                                 <select id="field-log-select" onchange="loadFieldLog(this.value)" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-teal focus:border-teal transition">
+                                     <option value="A4">Field A4 (Central Plot)</option>
+                                     <option value="B1">Field B1 (Waterlogged Corner)</option>
+                                     <option value="C7">Field C7 (High Salinity Area)</option>
+                                 </select>
+                             </label>
+                              <div class="bg-teal-50 p-4 rounded-lg max-h-40 overflow-y-auto border border-teal-200">
+                                 <ul id="gps-data-log" class="text-sm text-gray-700 space-y-1">
+                                     <li class="font-bold">Latest 5 Records for Field A4:</li>
+                                     <li>[23:15] Lat: 26.91, Lon: 75.79 | pH: 6.8</li>
+                                     <li>[23:00] Lat: 26.91, Lon: 75.78 | Moist: 52%</li>
+                                     <li>[22:45] Lat: 26.90, Lon: 75.79 | EC: 0.7</li>
+                                     <li>[22:30] Lat: 26.90, Lon: 75.78 | Temp: 28°C</li>
+                                 </ul>
+                             </div>
+                        </div>
+
+                        <div class="card bg-white p-8 rounded-xl border-t-4 border-indigo-500">
+                             <h4 class="text-xl font-bold text-indigo-700 mb-4 flex items-center"><i data-lucide="line-chart" class="w-5 h-5 mr-2"></i> Historical Trends & Correlation (F9)</h4>
+                             <p class="text-sm text-gray-600 mb-4">View long-term sensor data for comprehensive seasonal analysis.</p>
+                             <label class="block mb-4">
+                                 <span class="text-gray-700 font-semibold">Select Trend Data:</span>
+                                 <select id="trend-data-select" onchange="changeTrendData(this.value)" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                     <option value="NPK">NPK Fluctuation (30 Days)</option>
+                                     <option value="Moisture">Moisture vs. Rainfall (90 Days)</option>
+                                     <option value="pHEC">pH vs. EC Correlation (Yearly)</option>
+                                 </select>
+                             </label>
+                              <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                                 <p id="trend-analysis-output" class="text-lg font-bold text-gray-800">Showing NPK Fluctuation (30 Days)</p>
+                                 <p class="text-sm text-gray-600 mt-1">Analysis: P & K remained stable, N showed seasonal dip.</p>
+                             </div>
+                        </div>
+
+                    </div>
+
+                    <div class="space-y-8">
+                        <h3 class="text-2xl font-extrabold text-gray-700 border-b-2 pb-2">Data Acquisition & System Management</h3>
+                        
+                        <div class="card bg-white p-8 rounded-xl border-t-4 border-cyan-500">
+                             <h4 class="text-xl font-bold text-cyan-700 mb-4 flex items-center"><i data-lucide="layers-3" class="w-5 h-5 mr-2"></i> Sub-Soil Profiling Tool (F2)</h4>
+                             <p class="text-sm text-gray-600 mb-4">Visualize sensor readings at multiple depths.</p>
+                             <label class="block mb-4">
+                                 <span class="text-gray-700 font-semibold">Select Depth Layer:</span>
+                                 <select id="soil-depth-select" onchange="loadSoilProfile(this.value)" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-cyan-500 focus:border-cyan-500 transition">
+                                     <option value="0-10">0-10 cm (Topsoil)</option>
+                                     <option value="10-30">10-30 cm (Root Zone)</option>
+                                     <option value="30-60">30-60 cm (Subsoil)</option>
+                                 </select>
+                             </label>
+                             <div class="bg-cyan-50 p-4 rounded-lg border border-cyan-200">
+                                 <p class="text-lg font-bold text-gray-800 flex justify-between">Moisture: <span id="profile-moisture" class="text-cyan-700">--</span></p>
+                                 <p class="text-lg font-bold text-gray-800 flex justify-between">Temperature: <span id="profile-temp" class="text-cyan-700">--</span></p>
+                             </div>
+                        </div>
+
+                        <div class="card bg-white p-8 rounded-xl border-t-4 border-gray-500">
+                             <h4 class="text-xl font-bold text-gray-700 mb-4 flex items-center"><i data-lucide="refresh-ccw" class="w-5 h-5 mr-2"></i> OTA Firmware Updates (F4)</h4>
+                             <p class="text-sm text-gray-600 mb-4">Current Firmware: v3.1.2. Available Update: v3.2.0 (Stable)</p>
+                             
+                             <div id="ota-progress-container" class="mb-4">
+                                 <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                     <div id="ota-progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                 </div>
+                                 <p id="ota-status-text" class="text-sm text-indigo-700 mt-2">Ready to update.</p>
+                             </div>
+
+                            <button id="ota-update-button" onclick="startOtaUpdate()" class="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded-lg transition transform hover:scale-[1.01]">
+                                 Initiate Firmware Update (v3.2.0)
+                            </button>
+                        </div>
+                        
+                        <div class="card bg-white p-8 rounded-xl border-t-4 border-pink-500">
+                             <h4 class="text-xl font-bold text-pink-700 mb-4 flex items-center"><i data-lucide="cloud-off" class="w-5 h-5 mr-2"></i> Offline Data Sync & Queue (F5)</h4>
+                             <p class="text-sm text-gray-600 mb-4">The device stores up to 7 days of data locally during network loss.</p>
+                             <div class="bg-pink-50 p-4 rounded-lg border border-pink-200">
+                                 <p class="text-lg font-bold text-gray-800 flex justify-between">Local Records: <span id="offline-records" class="text-pink-700">245</span></p>
+                                 <p class="text-lg font-bold text-gray-800 flex justify-between">Network Status: <span id="network-status" class="text-teal font-extrabold">ONLINE</span></p>
+                             </div>
+                            <button onclick="simulateNetworkLoss()" class="w-full bg-pink-600 hover:bg-pink-700 text-white py-3 rounded-lg transition transform hover:scale-[1.01] mt-4">
+                                 Simulate Network Fluctuation
+                            </button>
+                        </div>
+
+                        <div class="card bg-white p-8 rounded-xl border-t-4 border-teal">
+                             <h4 class="text-xl font-bold text-teal mb-4 flex items-center"><i data-lucide="sigma" class="w-5 h-5 mr-2"></i> Custom ML Model Deployment (F20)</h4>
+                             <p class="text-sm text-gray-600 mb-4">Deploy specialized ML models (e.g., hyper-local yield predictor) to the edge device.</p>
+                             
+                             <div id="ml-progress-container" class="mb-4">
+                                 <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                     <div id="ml-progress-bar" class="bg-violet-600 h-2.5 rounded-full transition-all duration-1000" style="width: 0%"></div>
+                                 </div>
+                                 <p id="ml-status-text" class="text-sm text-violet-700 mt-2">Ready for deployment.</p>
+                             </div>
+
+                            <button id="ml-deploy-button" onclick="startMlDeployment()" class="w-full bg-teal hover:bg-teal-dark text-white py-3 rounded-lg transition transform hover:scale-[1.01]">
+                                 Deploy "Rice Yield v2.1" Model
+                            </button>
+                        </div>
+                        
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <section id="finance-page" class="page-content hidden bg-f7fbee">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-12 text-center border-b-4 border-amber-500 pb-4">
+                    AI-Driven Loan & Credit Eligibility Estimator
+                </h2>
+                <div class="card bg-white p-8 rounded-xl border-t-8 border-amber-500">
+                    <p class="text-lg text-gray-600 mb-6 text-center">
+                        Secure instant, personalized credit score and loan estimations based on your farm's <span class="font-bold text-amber-700">AI-Predicted Yield (F14)</span> and market value.
+                    </p>
+                    <div class="space-y-6">
+                        <label class="block">
+                            <span class="text-gray-700 font-semibold flex items-center mb-1">
+                                <i data-lucide="area-chart" class="w-5 h-5 mr-2 text-teal"></i>
+                                Land Area (in Acres)
+                            </span>
+                            <input id="input-area" type="number" min="0.1" step="0.1" value="5" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., 5.0">
+                        </label>
+
+                        <label class="block">
+                            <span class="text-gray-700 font-semibold flex items-center mb-1">
+                                <i data-lucide="box" class="w-5 h-5 mr-2 text-teal"></i>
+                                Crop Type for Yield Prediction
+                            </span>
+                            <select id="input-crop-type" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-amber-500 focus:border-amber-500 transition">
+                                <option value="Wheat">Wheat</option>
+                                <option value="Rice">Rice</option>
+                                <option value="Maize">Maize</option>
+                                <option value="Sugarcane">Sugarcane</option>
+                            </select>
+                        </label>
+
+                        <label class="block">
+                            <span class="text-gray-700 font-semibold flex items-center mb-1">
+                                <i data-lucide="indian-rupee" class="w-5 h-5 mr-2 text-teal"></i>
+                                Current Market Price (INR per Ton)
+                            </span>
+                            <input id="input-price" type="number" min="1000" step="500" value="15000" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-amber-500 focus:border-amber-500 transition" placeholder="e.g., 15000">
+                        </label>
+
+                        <button onclick="calculateLoanEligibility()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-4 px-4 rounded-lg transition duration-300 shadow-lg transform hover:scale-[1.01] flex items-center justify-center">
+                            <i data-lucide="calculator" class="w-6 h-6 mr-3"></i>
+                            Calculate Eligibility & Max Loan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tools-page" class="page-content hidden bg-f7fbee">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                 <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-12 text-center border-b-4 border-indigo-500 pb-4">
+                    Advanced AI Optimization Tools
+                </h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="card bg-white p-8 rounded-xl border-t-8 border-indigo-500 h-full">
+                        <h3 class="text-2xl font-bold text-indigo-700 mb-6 flex items-center">
+                            <i data-lucide="rotate-ccw" class="w-6 h-6 mr-3"></i> AI Crop Rotation Planner (F11)
+                        </h3>
+                        <p class="text-gray-600 mb-6">Generate a balanced, three-year crop rotation plan optimized for your soil profile, maximizing yield and nutrient retention.</p>
+                        
+                        <div class="space-y-4">
+                            <label class="block">
+                                <span class="text-gray-700 font-semibold">Current Soil Type (Simulated):</span>
+                                <select id="input-soil-type" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                    <option value="Loam">Loam (Default/Average)</option>
+                                    <option value="Sandy">Sandy (Low Water Retention)</option>
+                                    <option value="Clay">Clay (High Water Retention/Drainage issues)</option>
+                                    <option value="Salty">Salty (High EC)</option>
+                                </select>
+                            </label>
+
+                            <label class="block">
+                                <span class="text-gray-700 font-semibold">Primary Farming Goal:</span>
+                                <select id="input-target-goal" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-indigo-500 focus:border-indigo-500 transition">
+                                    <option value="MaxYield">Maximum Yield (High-Value)</option>
+                                    <option value="NutrientFix">Soil Nutrient Fixation (Legumes/Cover)</option>
+                                    <option value="DroughtResist">Drought Resistance (Low Water Crops)</option>
+                                </select>
+                            </label>
+
+                            <button onclick="generateCropPlan()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 shadow-lg transform hover:scale-[1.01] flex items-center justify-center mt-6">
+                                <i data-lucide="refresh-cw" class="w-5 h-5 mr-3"></i> Generate 3-Year Rotation Plan
+                            </button>
+                        </div>
+                        
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <h3 class="text-2xl font-bold text-red-700 mb-4 flex items-center">
+                                <i data-lucide="bug" class="w-6 h-6 mr-3"></i> Predictive Pest Alert (F12)
+                            </h3>
+                            <p class="text-gray-600 mb-4">Calculate immediate risk for common regional crop diseases.</p>
+                            <label class="block mb-4">
+                                <span class="text-gray-700 font-semibold">Local Air Humidity (%):</span>
+                                <input type="number" id="pest-humidity" min="0" max="100" value="70" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-red-500 focus:border-red-500 transition">
+                            </label>
+                            <button onclick="calculatePestRisk()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition transform hover:scale-[1.01] flex items-center justify-center">
+                                <i data-lucide="alert-triangle" class="w-5 h-5 mr-3"></i> Calculate Risk Score
+                            </button>
+                        </div>
+                        
+                    </div>
+                    
+                    <div class="card bg-white p-8 rounded-xl border-t-8 border-cyan-500 h-full">
+                        <h3 class="text-2xl font-bold text-cyan-700 mb-6 flex items-center">
+                            <i data-lucide="droplets" class="w-6 h-6 mr-3"></i> Water Footprint Optimization (F51)
+                        </h3>
+                        <p class="text-gray-600 mb-6">Estimate water usage and optimize crop selection to meet sustainability goals and seasonal rainfall patterns.</p>
+                        
+                        <div class="space-y-4">
+                             <label class="block">
+                                <span class="text-gray-700 font-semibold">Primary Crop (Current/Planned):</span>
+                                <select id="input-water-crop" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-cyan-500 focus:border-cyan-500 transition">
+                                    <option value="Rice">Rice (High Water Demand)</option>
+                                    <option value="Wheat">Wheat (Medium Water Demand)</option>
+                                    <option value="Millet">Millets/Bajra (Low Water Demand)</option>
+                                    <option value="Sugarcane">Sugarcane (Very High Water Demand)</option>
+                                </select>
+                            </label>
+                            
+                            <label class="block">
+                                <span class="text-gray-700 font-semibold">Expected Seasonal Rainfall (mm):</span>
+                                <input id="input-rainfall" type="number" min="50" step="50" value="400" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:ring-cyan-500 focus:border-cyan-500 transition" placeholder="e.g., 400">
+                            </label>
+                            
+                            <button onclick="analyzeWaterFootprint()" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 shadow-lg transform hover:scale-[1.01] flex items-center justify-center mt-6">
+                                <i data-lucide="trending-up" class="w-5 h-5 mr-3"></i> Analyze & Optimize Water Use
+                            </button>
+                        </div>
+                        
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <h3 class="text-2xl font-bold text-teal mb-4 flex items-center">
+                                <i data-lucide="clock" class="w-6 h-6 mr-3"></i> Automated Irrigation Scheduler (F16)
+                            </h3>
+                             <p id="irrigation-status" class="text-lg font-bold text-teal mb-4">Status: Optimal Cycle Active</p>
+                            <button onclick="toggleIrrigationScheduler()" id="irrigation-toggle-button" class="w-full bg-teal hover:bg-teal-dark text-white font-bold py-3 px-4 rounded-lg transition duration-300 shadow-lg transform hover:scale-[1.01] flex items-center justify-center">
+                                <i data-lucide="pause" class="w-5 h-5 mr-3"></i> Pause Automated Cycle
+                            </button>
+                        </div>
+                        
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <h3 class="text-2xl font-bold text-lime-700 mb-4 flex items-center">
+                                <i data-lucide="cloud-cog" class="w-6 h-6 mr-3"></i> Carbon Sequestration Tracker (F18)
+                            </h3>
+                            <p class="text-gray-600 mb-4">Track estimated carbon sequestered by your current practices.</p>
+                            <div class="bg-lime-50 p-4 rounded-lg border border-lime-200">
+                                <p class="text-lg font-bold text-gray-800 flex justify-between">Total Estimated Carbon: <span id="carbon-amount" class="text-lime-700">12.5 T/ha</span></p>
+                                <p class="text-sm text-gray-600">Last measured: Q3 2024</p>
+                            </div>
+                            <button onclick="updateCarbonTracker()" class="w-full bg-lime-600 hover:bg-lime-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 shadow-lg transform hover:scale-[1.01] flex items-center justify-center mt-4">
+                                <i data-lucide="trending-up" class="w-5 h-5 mr-3"></i> Update Based on New Plan
+                            </button>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="profile-page" class="page-content hidden bg-f7fbee">
+            <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
+                 <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-12 text-center border-b-4 border-cyan-500 pb-4">
+                    User Profile & Account Status
+                </h2>
+                <div class="card bg-white p-8 rounded-xl border-t-8 border-cyan-500">
+                    <div class="flex flex-col items-center mb-8">
+                        <i data-lucide="user-circle" class="w-20 h-20 text-cyan-600 mb-4"></i>
+                        <h3 id="profile-name" class="text-3xl font-extrabold text-gray-800">Anonymous User</h3>
+                        <p id="profile-email" class="text-lg text-gray-500">guest@agrosense.in</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="font-semibold text-gray-700 flex items-center"><i data-lucide="id-card" class="w-5 h-5 mr-2 text-indigo-500"></i> User ID (UID):</span>
+                            <span id="profile-uid" class="text-sm font-medium text-gray-600 break-all">Loading...</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="font-semibold text-gray-700 flex items-center"><i data-lucide="map-pin" class="w-5 h-5 mr-2 text-teal"></i> Region:</span>
+                            <span class="text-sm font-medium text-gray-600">India (🇮🇳)</span>
+                        </div>
+                        <div class="flex justify-between items-center border-b pb-2">
+                            <span class="font-semibold text-gray-700 flex items-center"><i data-lucide="speech" class="w-5 h-5 mr-2 text-amber-500"></i> Preferred Language:</span>
+                            <span class="text-sm font-medium text-gray-600">Hindi / English (Auto-Detect)</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-2">
+                            <span class="font-semibold text-gray-700 flex items-center"><i data-lucide="credit-card" class="w-5 h-5 mr-2 text-red-500"></i> Subscription Tier:</span>
+                            <span class="text-sm font-medium text-red-600 font-bold">Premium - Trial</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="showPage('auth-page'); toggleAuthMode('login');" class="w-full bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 rounded-lg transition duration-300 shadow-lg mt-8">
+                        Manage Account / Sign Out
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="features-page" class="page-content hidden bg-gray-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-red-600 mb-10 text-center border-b-4 border-red-500 pb-4">
+                    Page Removed: Solutions are now Fully Integrated
+                </h2>
+                <div class="p-8 bg-white rounded-xl shadow-2xl border-l-8 border-red-500">
+                    <p class="text-xl text-gray-700 mb-4">The previous 'Solutions' list was removed to comply with the request for all features to be **fully working** and **responsive** instead of just a listing.</p>
+                    <p class="text-lg text-gray-600">Please navigate to the dedicated functional pages to demonstrate the integrated features:</p>
+                    <ul class="mt-4 list-disc list-inside space-y-2 font-semibold">
+                        <li><span class="text-teal">Intelligence:</span> (F1, F13, F15, F17, F19) - Live Dashboard & Voice Control.</li>
+                        <li><span class="text-red-600">IoT Console:</span> (F2, F3, F4, F5, F6, F7, F8, F9, F10, F20) - Device Management.</li>
+                        <li><span class="text-amber-600">Finance:</span> (F14, F36) - Loan Estimation.</li>
+                        <li><span class="text-indigo-600">Tools:</span> (F11, F12, F16, F18, F51) - Predictive Planners and Trackers.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="about-page" class="page-content hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-12 text-center border-b-4 border-teal pb-4">
+                    Our Vision: Empowering Indian Agriculture
+                </h2>
+                <div class="card bg-white p-10 rounded-xl text-lg text-gray-700 leading-relaxed border-t-8 border-teal">
+                    <p class="mb-6 font-semibold text-gray-800">AgroSense India is the leading provider of AI-driven agricultural intelligence, dedicated to transforming Indian farming into a modern, data-optimized science.</p>
+                    <p class="mb-4">Our mission is to democratize precision farming technology, making real-time soil and climate insights accessible and understandable to every farmer. We achieve this by integrating low-cost, high-accuracy IoT sensors with state-of-the-art machine learning algorithms designed for local conditions.</p>
+                    <p class="mb-4">By focusing on over 25 Indian languages for voice commands and low-bandwidth accessibility, we are breaking down barriers, ensuring our platform directly supports the economic viability and environmental sustainability of agriculture across India.</p>
+                    <p class="font-extrabold text-teal mt-6">Innovate. Integrate. Sustain.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="contact-page" class="page-content hidden bg-gray-900 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl md:text-5xl font-extrabold text-white mb-8 text-center">
+                    Local Support & Inquiries
+                </h2>
+                <div class="max-w-xl mx-auto p-6 bg-gray-800 rounded-xl shadow-xl border-t-4 border-red-500">
+                    <p class="text-center text-gray-300 mb-6">Contact our regional support team 24/7 for technical assistance, partnership opportunities, or enterprise solutions.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 text-red-400">
+                            <i data-lucide="mail" class="w-6 h-6"></i>
+                            <span class="font-medium">Inquiries: support@agrosense.in</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-red-400">
+                            <i data-lucide="phone" class="w-6 h-6"></i>
+                            <span class="font-medium">National Hotline: +91 (800) 555-AGRO</span>
+                        </div>
+                        <div class="flex items-center space-x-3 text-red-400">
+                            <i data-lucide="map-pin" class="w-6 h-6"></i>
+                            <span class="font-medium">HQ: New Delhi, India</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    
+    <footer class="bg-gray-800 p-8 text-center text-sm text-gray-400 mt-auto border-t border-teal">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-center space-x-6 mb-3">
+                 <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                 <span class="text-gray-600">|</span>
+                 <a href="#" class="hover:text-white transition">Terms of Service</a>
+                 <span class="text-gray-600">|</span>
+                 <a href="#" class="hover:text-white transition">Careers</a>
+            </div>
+            <p>&copy; 2025 Soil & Soul India Corp. All Rights Reserved. </p>
+            <p class="mt-1">Pioneering the next generation of data-driven agriculture.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Ensure Lucide icons are rendered
+        lucide.createIcons();
+
+        // --- Layout/UI Logic ---
+        const sidebar = document.getElementById('sidebar');
+        const backdrop = document.getElementById('backdrop');
+        const mainContentSections = document.querySelectorAll('.page-content, #home, #auth-page');
+        let currentPage = 'home';
+        
+        let isIrrigationActive = true; // F16 state variable
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('open');
+            backdrop.classList.toggle('open');
+            if (sidebar.classList.contains('open')) {
+                backdrop.classList.remove('hidden');
+            } else {
+                setTimeout(() => { backdrop.classList.add('hidden'); }, 300);
+            }
+        }
+        window.toggleSidebar = toggleSidebar;
+
+        /**
+         * Simulates page navigation by showing one section and hiding all others.
+         * @param {string} pageId - The ID of the section to show (e.g., 'home', 'dashboard-page').
+         */
+        function showPage(pageId) {
+            currentPage = pageId;
+            mainContentSections.forEach(section => {
+                if (section.id === pageId) {
+                    section.classList.remove('hidden');
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+
+            // Update Navbar active state
+            document.querySelectorAll('.nav-link').forEach(link => {
+                const targetPage = link.getAttribute('data-page');
+                const isCurrent = targetPage === pageId;
+                
+                // Reset styling (Clear all dynamic color classes)
+                link.classList.remove('active', 'text-teal', 'border-teal', 'text-red-400', 'border-red-400', 'text-amber-400', 'border-amber-400', 'text-indigo-400', 'border-indigo-400', 'text-cyan-400', 'border-cyan-400', 'text-gray-400', 'border-gray-400');
+                
+                // Add default style back (white text/transparent border)
+                if (targetPage !== 'auth-page') {
+                    link.classList.add('text-white', 'border-transparent');
+                }
+
+                if (isCurrent) {
+                    link.classList.add('border-b-2', 'active');
+                    // Use a unified Teal highlight for most pages for a cleaner look
+                    if (targetPage === 'home' || targetPage === 'dashboard-page' || targetPage === 'iot-console-page' || targetPage === 'tools-page' || targetPage === 'about-page') {
+                         link.classList.add('text-teal', 'border-teal');
+                    } else if (targetPage === 'finance-page' || targetPage === 'auth-page') {
+                        link.classList.add('text-amber-400', 'border-amber-400');
+                    } else if (targetPage === 'profile-page') {
+                        link.classList.add('text-cyan-400', 'border-cyan-400');
+                    }
+                    link.classList.remove('text-white', 'border-transparent');
+                }
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        window.showPage = showPage;
+
+        // --- Core Application Logic (Translations, Dashboard, Voice) ---
+
+        const TRANSLATIONS = {
+            'en-US': {
+                'main-heading': 'Real-Time Soil Intelligence Dashboard',
+                'label-ph': 'Soil pH', 'desc-ph': 'Acidity/Alkalinity',
+                'label-moisture': 'Moisture (%)', 'desc-moisture': 'Volumetric Water Content',
+                'label-npk': 'NPK Status', 'desc-npk': 'N, P, K',
+                'label-recommendation': "AI Optimization Command",
+                // F15: Micro-Dosing integrated into default recommendation
+                'default-recommendation': "Optimal Soil Health Detected. Maintain current irrigation cycle. Predictive models suggest low risk of nutrient deficiency for the next 7 days.",
+                'voice-heading': 'Voice Control Interface',
+                'voice-subtext': 'Activate command mode and speak your query in any supported language for instant analysis and results.',
+                'voice-ready': 'Awaiting Command.',
+                'voice-listening': 'Listening for command...',
+                'voice-processing': 'Processing AI command...',
+                'voice-error': 'Voice command error. Check microphone or network connection.',
+                'status-connecting': 'Connecting to device...',
+                'status-live': 'Live Data Stream Active (Last update: {time})',
+                'status-error': 'Error fetching live data. Using simulated data.',
+                'loading': '--',
+                'recommendation-npk-low': "Calculated Micro-Dosing (F15): Soil needs 5.0 kg/acre Nitrogen (N-10). Check irrigation as moisture is suboptimal.",
+            },
+            'hi-IN': {
+                'main-heading': 'रीयल-टाइम मिट्टी इंटेलिजेंस डैशबोर्ड',
+                'label-ph': 'मिट्टी का pH', 'desc-ph': 'अम्लता/क्षारीयता',
+                'label-moisture': 'नमी (%)', 'desc-moisture': 'आयतन पानी की मात्रा',
+                'label-npk': 'एनपीके स्थिति', 'desc-npk': 'N, P, K',
+                'label-recommendation': "एआई अनुकूलन कमांड",
+                'default-recommendation': "इष्टतम मिट्टी स्वास्थ्य का पता चला। वर्तमान सिंचाई चक्र बनाए रखें। प्रेडिक्टिव मॉडल अगले 7 दिनों के लिए पोषक तत्वों की कमी का कम जोखिम सुझाते हैं।",
+                'voice-heading': 'वॉयस कंट्रोल इंटरफ़ेस',
+                'voice-subtext': 'तत्काल विश्लेषण और परिणामों के लिए कमांड मोड सक्रिय करें और अपनी किसी भी समर्थित भाषा में अपनी क्वेरी बोलें।',
+                'voice-ready': 'कमांड की प्रतीक्षा है।',
+                'voice-listening': 'कमांड सुन रहा है...',
+                'voice-processing': 'एआई कमांड संसाधित हो रहा है...',
+                'voice-error': 'वॉयस कमांड त्रुटि। माइक्रोफोन या नेटवर्क कनेक्शन जांचें।',
+                'status-connecting': 'डिवाइस से कनेक्ट हो रहा है...',
+                'status-live': 'लाइव डेटा स्ट्रीम सक्रिय (अंतिम अपडेट: {time})',
+                'status-error': 'लाइव डेटा प्राप्त करने में त्रुटि। सिम्युलेटेड डेटा का उपयोग कर रहे हैं।',
+                'loading': '--',
+                'recommendation-npk-low': "गणना की गई माइक्रो-डोजिंग (F15): मिट्टी को 5.0 किग्रा/एकर नाइट्रोजन (N-10) की आवश्यकता है। नमी इष्टतम नहीं है इसलिए सिंचाई जांचें।",
+            },
+            'mr-IN': {
+                'main-heading': 'थेट माती बुद्धिमत्ता डॅशबोर्ड',
+                'label-ph': 'मातीचा pH', 'desc-ph': 'अम्लता/क्षारता',
+                'label-moisture': 'आर्द्रता (%)', 'desc-moisture': 'पाण्याचे प्रमाण',
+                'label-npk': 'एनपीके स्थिती', 'desc-npk': 'N, P, K',
+                'label-recommendation': "एआय ऑप्टिमायझेशन कमांड",
+                'default-recommendation': "इष्टतम माती आरोग्य आढळले. सध्याचे सिंचन चक्र कायम ठेवा. प्रेडिक्टिव मॉडेल पुढील 7 दिवसांसाठी पोषक तत्वांच्या कमतरतेचा कमी धोका सूचित करतात.",
+                'voice-heading': 'वॉयस कंट्रोल इंटरफेस',
+                'voice-subtext': 'तत्काळ विश्लेषण आणि परिणामांसाठी कमांड मोड सक्रिय करा आणि तुमच्या कोणत्याही समर्थित भाषेत तुमची क्वेरी बोला.',
+                'voice-ready': 'कमांडची प्रतीक्षा आहे।',
+                'voice-listening': 'कमांड ऐकत आहे...',
+                'voice-processing': 'एआय कमांडवर प्रक्रिया करत आहे...',
+                'voice-error': 'व्हॉईस कमांडमध्ये त्रुटी. मायक्रोफोन किंवा नेटवर्क कनेक्शन तपासा।',
+                'status-connecting': 'डिव्हाईसशी कनेक्ट होत आहे...',
+                'status-live': 'थेट डेटा स्ट्रीम सक्रिय (शेवटचे अपडेट: {time})',
+                'status-error': 'थेट डेटा मिळविण्यात त्रुटी. सिम्युलेटेड डेटा वापरत आहे।',
+                'loading': '--',
+                'recommendation-npk-low': "गणना केलेले मायक्रो-डोजिंग (F15): मातीला 5.0 किलो/एकर नायट्रोजन (N-10) ची आवश्यकता आहे. आर्द्रता अपेक्षेप्रमाणे नसल्यामुळे सिंचन तपासा.",
+            }
+            // Add more language objects here for full 28 language support
+        };
+
+        let currentLang = 'en-US';
+        let isVoiceActive = false;
+        let recognition; 
+
+        function updateUI(lang) {
+            currentLang = lang;
+            const t = TRANSLATIONS[lang] || TRANSLATIONS['en-US'];
+
+            // Only update dashboard elements if the dashboard is visible/loaded
+            if (document.getElementById('dashboard-page')) {
+                document.getElementById('main-heading').textContent = t['main-heading'];
+                document.getElementById('label-ph').textContent = t['label-ph'];
+                document.getElementById('desc-ph').textContent = t['desc-ph'];
+                document.getElementById('label-moisture').textContent = t['label-moisture'];
+                document.getElementById('desc-moisture').textContent = t['desc-moisture'];
+                document.getElementById('label-npk').textContent = t['label-npk'];
+                document.getElementById('desc-npk').textContent = t['desc-npk'];
+                document.getElementById('label-recommendation').textContent = t['label-recommendation'];
+                document.getElementById('voice-heading').textContent = t['voice-heading'];
+                document.getElementById('voice-subtext').textContent = t['voice-subtext'];
+                document.getElementById('voice-output').textContent = t['voice-ready'];
+
+                const statusElement = document.getElementById('status-message');
+                const originalText = statusElement.textContent;
+                let newStatusText = t['status-connecting'];
+                
+                if (originalText.includes('Live Data') || originalText.includes('सक्रिय')) {
+                    const timeMatch = originalText.match(/\(([^)]+)\)/);
+                    const time = timeMatch ? timeMatch[1] : '';
+                    newStatusText = t['status-live'].replace('{time}', time);
+                }
+                statusElement.textContent = newStatusText;
+            }
+        }
+
+        async function translateText(text, sourceLang, targetLang) {
+            // Placeholder for Gemini API translation call 
+            await new Promise(resolve => setTimeout(resolve, 1000)); 
+            if (sourceLang !== 'en-US' && targetLang === 'en-US') {
+                return `(Command from ${sourceLang} translated: "${text.toUpperCase()}") - AI Response: Applying micro-dosing fertilizer is currently recommended for optimal soil balance.`;
+            }
+            return `(Simulated Response: Based on your request "${text}", the system found an answer.) - We recommend checking the 'AI Optimization Command' section for immediate actions.`;
+        }
+
+
+        window.handleLanguageChange = (lang) => {
+            updateUI(lang);
+            window.savePreferredLanguage(lang); // Save preference to Firebase
+        };
+
+        window.updateDashboard = (data, timestamp) => {
+            const t = TRANSLATIONS[currentLang] || TRANSLATIONS['en-US'];
+            
+            document.getElementById('value-ph').textContent = data.pH.toFixed(1);
+            document.getElementById('value-moisture').textContent = `${data.moisture}%`;
+            document.getElementById('value-npk').textContent = data.NPK;
+            document.getElementById('value-ec').textContent = (data.EC || 0.8).toFixed(1); 
+            
+            const recommendationIcon = document.getElementById('recommendation-icon');
+            const recommendationText = document.getElementById('recommendation-text');
+            
+            // F15: Micro-Dosing Recommendation Logic
+            if (data.NPK.includes("Low N") || data.moisture < 50) {
+                 recommendationIcon.innerHTML = '<i data-lucide="droplet-plus" class="w-16 h-16 text-blue-600"></i>';
+                 recommendationText.textContent = t['recommendation-npk-low'];
+            } else if (data.NPK.includes("Optimal") && data.moisture >= 50 && data.moisture <= 70) {
+                 recommendationIcon.innerHTML = '<i data-lucide="shield-check" class="w-16 h-16 text-teal"></i>';
+                 recommendationText.textContent = t['default-recommendation'];
+            } else {
+                 recommendationIcon.innerHTML = '<i data-lucide="alert-triangle" class="w-16 h-16 text-red-600"></i>';
+                 recommendationText.textContent = 'Critical Alert: Severe soil imbalance detected. Check immediate recommendations in the Anomaly Report.';
+            }
+            lucide.createIcons(); 
+            
+            document.getElementById('status-message').className = 'text-center mb-8 text-lg font-medium text-teal';
+            document.getElementById('status-message').textContent = t['status-live'].replace('{time}', new Date(timestamp).toLocaleTimeString());
+            
+            // F19: Update Anomaly Log
+            if (document.getElementById('anomaly-log')) {
+                 if (data.moisture < 40) {
+                    document.getElementById('anomaly-log').textContent = `CRITICAL: Moisture Drop (${data.moisture}%) at Field A1. Initiate Irrigation!`;
+                    document.getElementById('anomaly-log').classList.remove('text-amber-400', 'text-teal');
+                    document.getElementById('anomaly-log').classList.add('text-red-400');
+                } else {
+                    document.getElementById('anomaly-log').textContent = `No Critical Anomalies. All sensor data nominal.`;
+                    document.getElementById('anomaly-log').classList.remove('text-amber-400', 'text-red-400');
+                    document.getElementById('anomaly-log').classList.add('text-teal');
+                }
+            }
+        }
+        
+        // --- Voice Command Logic (Uses Web Speech API) ---
+        
+        function toggleVoiceCommand() {
+            if (!('webkitSpeechRecognition' in window)) {
+                showModal('Voice Command Error', 'The voice interface is not supported by your browser (requires HTTPS/specific browser support). Please use the multilingual text interface.');
+                return;
+            }
+
+            const t = TRANSLATIONS[currentLang] || TRANSLATIONS['en-US'];
+            const voiceButton = document.getElementById('voice-button');
+            const voiceOutput = document.getElementById('voice-output');
+            
+            if (!recognition) {
+                recognition = new webkitSpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                
+                recognition.onstart = () => {
+                    isVoiceActive = true;
+                    voiceButton.classList.add('bg-red-500', 'ring-red-300', 'animate-pulse');
+                    voiceButton.classList.remove('bg-gray-900');
+                    voiceOutput.textContent = t['voice-listening'];
+                };
+                
+                recognition.onend = () => {
+                    isVoiceActive = false;
+                    voiceButton.classList.remove('bg-red-500', 'ring-red-300', 'animate-pulse');
+                    voiceButton.classList.add('bg-red-600'); 
+                    if (voiceOutput.textContent === t['voice-listening']) {
+                        voiceOutput.textContent = t['voice-ready']; 
+                    }
+                };
+
+                recognition.onresult = async (event) => {
+                    const command = event.results[0][0].transcript;
+                    voiceOutput.textContent = t['voice-processing'];
+                    
+                    const inputLang = document.getElementById('language-select').value;
+                    const response = await translateText(command, inputLang, 'en-US');
+                    
+                    voiceOutput.textContent = `${response}`;
+                };
+
+                recognition.onerror = (event) => {
+                    voiceOutput.textContent = `${t['voice-error']} (${event.error})`;
+                    isVoiceActive = false;
+                    recognition.stop();
+                };
+            }
+
+            recognition.lang = currentLang;
+
+            if (isVoiceActive) {
+                recognition.stop();
+            } else {
+                recognition.start();
+            }
+        }
+        window.toggleVoiceCommand = toggleVoiceCommand;
+
+        // --- FUNCTIONAL FEATURE 1: LOAN CALCULATOR (F36, F14) ---
+        
+        /**
+         * F14: Simulated AI Yield Prediction based on input crop type.
+         */
+        function predictYield(cropType) {
+            let baseYield; // Tons/Acre
+            switch (cropType) {
+                case 'Wheat': baseYield = 2.8; break;
+                case 'Rice': baseYield = 3.5; break;
+                case 'Maize': baseYield = 4.2; break;
+                case 'Sugarcane': baseYield = 70.0; break;
+                default: baseYield = 2.0;
+            }
+            // Simulate AI quality offset based on (simulated) good soil conditions
+            const yieldOffset = Math.random() * 0.5; // +0 to +0.5 Tons/Acre
+            return (baseYield + yieldOffset).toFixed(2);
+        }
+        
+        window.calculateLoanEligibility = () => {
+            const area = parseFloat(document.getElementById('input-area').value);
+            const cropType = document.getElementById('input-crop-type').value;
+            const price = parseFloat(document.getElementById('input-price').value);
+
+            if (isNaN(area) || isNaN(price) || area <= 0 || price <= 0) {
+                showModal('Input Error', 'Please enter valid positive values for Land Area and Market Price.');
+                return;
+            }
+            
+            const predictedYieldPerAcre = parseFloat(predictYield(cropType));
+            const totalRevenue = area * predictedYieldPerAcre * price;
+            
+            let eligibility = 'Very Low';
+            let maxLoanPercentage = 0.1; 
+            let scoreColor = 'text-red-600';
+
+            if (totalRevenue > 700000) { 
+                eligibility = 'Excellent';
+                maxLoanPercentage = 0.80;
+                scoreColor = 'text-teal';
+            } else if (totalRevenue > 350000) { 
+                eligibility = 'High';
+                maxLoanPercentage = 0.65;
+                scoreColor = 'text-lime-600';
+            } else if (totalRevenue > 150000) { 
+                eligibility = 'Medium';
+                maxLoanPercentage = 0.50;
+                scoreColor = 'text-amber-600';
+            } else if (totalRevenue > 75000) { 
+                eligibility = 'Low';
+                maxLoanPercentage = 0.35;
+                scoreColor = 'text-orange-600';
+            } 
+
+            const maxLoan = totalRevenue * maxLoanPercentage;
+
+            const revenueFormatted = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(totalRevenue);
+            const loanFormatted = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(maxLoan);
+
+            const resultHtml = `
+                <div class="space-y-3 text-left">
+                    <p class="font-bold text-gray-800">AI Predicted Yield (${cropType}): <span class="text-teal font-extrabold">${predictedYieldPerAcre} Tons/Acre</span></p>
+                    <p class="font-bold text-gray-800">Projected Revenue: <span class="text-teal">${revenueFormatted}</span></p>
+                    <p class="font-bold text-gray-800">Credit Eligibility: <span class="${scoreColor} font-extrabold">${eligibility}</span></p>
+                    <p class="font-bold text-gray-800">Maximum Estimated Loan: <span class="text-indigo-700 text-xl">${loanFormatted}</span></p>
+                    <p class="text-sm text-gray-500 mt-4">This is an AI-driven estimate (Max ${Math.round(maxLoanPercentage * 100)}% of Projected Revenue).</p>
+                </div>
+            `;
+            showModal('AI Credit Estimation Result', resultHtml);
+        }
+        window.calculateLoanEligibility = calculateLoanEligibility;
+        
+        // --- FUNCTIONAL FEATURE 2: CROP ROTATION PLANNER (F11) ---
+        window.generateCropPlan = () => {
+            const soilType = document.getElementById('input-soil-type').value;
+            const targetGoal = document.getElementById('input-target-goal').value;
+
+            let plan = {};
+            let advice = "";
+            let impact = "High Yield, Improved Soil Structure.";
+
+            if (soilType === 'Loam' && targetGoal === 'MaxYield') {
+                plan = { Year1: 'Wheat', Year2: 'Maize/Corn', Year3: 'Potato/Vegetables' };
+                advice = "Loam soil supports excellent drainage and nutrient retention. The plan focuses on high-value cash crops with optimal rotation for nitrogen and potassium balance.";
+            } else if (soilType === 'Clay' && targetGoal === 'NutrientFix') {
+                plan = { Year1: 'Chickpeas (Legume)', Year2: 'Mustard/Oilseed', Year3: 'Green Manure (Cover Crop)' };
+                advice = "Focus on deep-rooted legumes (Chickpeas) to break up dense clay structure and fix nitrogen. Green Manure in year 3 significantly boosts organic matter and reduces erosion.";
+                impact = "Nitrogen Fixation, Improved Drainage, Medium Yield.";
+            } else if (soilType === 'Sandy' && targetGoal === 'DroughtResist') {
+                 plan = { Year1: 'Millets (Bajra)', Year2: 'Groundnut (Low Water Legume)', Year3: 'Pulses (Arhar/Toor)' };
+                advice = "Sandy soil struggles with moisture retention. We prioritize hardy, low-water crops (Millets, Pulses) and a drought-resistant legume (Groundnut) to conserve water resources.";
+                impact = "Water Conservation, High Drought Resilience, Stable Yield.";
+            } else {
+                 plan = { Year1: 'Rice', Year2: 'Wheat', Year3: 'Green Gram (Moong)' };
+                advice = "Standard rotational plan to maintain soil balance and prevent pest cycles. Best for areas with reliable irrigation.";
+            }
+            
+            const planHtml = `
+                <div class="space-y-3 text-left">
+                    <p class="font-bold text-gray-800 text-center text-lg mb-3 border-b pb-2">Optimized 3-Year Plan (F11)</p>
+                    <p class="font-bold text-gray-800 flex justify-between">Year 1 (Kharif/Rabi): <span class="text-indigo-700">${plan.Year1}</span></p>
+                    <p class="font-bold text-gray-800 flex justify-between">Year 2 (Kharif/Rabi): <span class="text-indigo-700">${plan.Year2}</span></p>
+                    <p class="font-bold text-gray-800 flex justify-between">Year 3 (Kharif/Rabi): <span class="text-indigo-700">${plan.Year3}</span></p>
+                    <h4 class="font-bold text-gray-800 mt-4 border-t pt-2">AI Rationale:</h4>
+                    <p class="text-sm text-gray-600">${advice}</p>
+                    <p class="text-sm text-gray-500 mt-2">Expected Impact: ${impact}</p>
+                </div>
+            `;
+            showModal('AI Crop Rotation Plan', planHtml);
+        }
+        window.generateCropPlan = generateCropPlan;
+        
+        // --- FUNCTIONAL FEATURE 3: WATER FOOTPRINT OPTIMIZATION (F51) ---
+        window.analyzeWaterFootprint = () => {
+            const crop = document.getElementById('input-water-crop').value;
+            const rainfall = parseFloat(document.getElementById('input-rainfall').value);
+
+            if (isNaN(rainfall) || rainfall < 0) {
+                 showModal('Input Error', 'Please enter a valid seasonal rainfall amount in millimeters (mm).');
+                 return;
+            }
+            
+            let waterDemand_mm = 600; // Default medium demand
+
+            switch (crop) {
+                case 'Rice': waterDemand_mm = 1200; break;
+                case 'Wheat': waterDemand_mm = 550; break;
+                case 'Maize': waterDemand_mm = 450; break;
+                case 'Millet': waterDemand_mm = 300; break;
+                case 'Sugarcane': waterDemand_mm = 1800; break;
+            }
+            
+            const netIrrigationNeed_mm = Math.max(0, waterDemand_mm - rainfall);
+            const waterFootprintStatus = netIrrigationNeed_mm > 500 ? "High" : netIrrigationNeed_mm > 100 ? "Medium" : "Low";
+            
+            let advice = "Optimal water use estimated. Continue monitoring moisture levels via the Intelligence Dashboard.";
+            let adviceColor = "text-teal";
+            
+            if (waterFootprintStatus === "High") {
+                advice = "Critical Water Deficit Detected! Net irrigation need is high. Consider switching to Millets or using Drip Irrigation/Precision Sprinklers to reduce water demand.";
+                adviceColor = "text-red-600";
+            } else if (waterFootprintStatus === "Medium") {
+                advice = "Moderate Irrigation needed. Schedule irrigation cycles strategically based on daily moisture readings. Avoid flood irrigation.";
+                adviceColor = "text-amber-600";
+            }
+
+            const resultHtml = `
+                <div class="space-y-3 text-left">
+                    <p class="font-bold text-gray-800 flex justify-between">Selected Crop: <span class="text-cyan-700">${crop}</span></p>
+                    <p class="font-bold text-gray-800 flex justify-between">Crop Water Demand: <span class="text-cyan-700">${waterDemand_mm} mm</span></p>
+                    <p class="font-bold text-gray-800 flex justify-between">Net Irrigation Need: <span class="${adviceColor} font-extrabold">${netIrrigationNeed_mm} mm</span></p>
+                    <h4 class="font-bold text-gray-800 mt-4 border-t pt-2">AI Optimization Advice:</h4>
+                    <p class="text-sm text-gray-600 ${adviceColor}">${advice}</p>
+                    <p class="text-sm text-gray-500 mt-2">Water Footprint Status: ${waterFootprintStatus} (Total Water Demand - Rainfall)</p>
+                </div>
+            `;
+            showModal('Water Footprint Analysis (F51)', resultHtml);
+        }
+        window.analyzeWaterFootprint = analyzeWaterFootprint;
+
+        // --- FUNCTIONAL FEATURE 4: PREDICTIVE PEST ALERT (F12) ---
+        window.calculatePestRisk = () => {
+            const humidity = parseInt(document.getElementById('pest-humidity').value);
+            
+            if (isNaN(humidity) || humidity < 0 || humidity > 100) {
+                 showModal('Input Error', 'Please enter a valid humidity percentage (0-100).');
+                 return;
+            }
+            
+            let risk = 'Low';
+            let riskColor = 'text-teal';
+            let recommendation = 'Low risk of fungal infection and insect breeding. Continue routine monitoring.';
+
+            if (humidity > 80) {
+                risk = 'High';
+                riskColor = 'text-red-600';
+                recommendation = 'High risk of fungal diseases (e.g., rust, blight) due to sustained high humidity. Apply a preventive fungicide treatment immediately.';
+            } else if (humidity > 65) {
+                 risk = 'Medium';
+                riskColor = 'text-amber-600';
+                recommendation = 'Moderate risk of pest outbreaks (e.g., aphids, whiteflies). Increase scouting and prepare for targeted treatment.';
+            }
+
+            const resultHtml = `
+                <div class="space-y-3 text-left">
+                    <p class="font-bold text-gray-800 flex justify-between">Current Local Humidity: <span class="text-indigo-700">${humidity}%</span></p>
+                    <p class="font-bold text-gray-800 flex justify-between">Pest/Disease Risk Score: <span class="${riskColor} font-extrabold">${risk}</span></p>
+                    <h4 class="font-bold text-gray-800 mt-4 border-t pt-2">Predictive Action:</h4>
+                    <p class="text-sm text-gray-600 ${riskColor}">${recommendation}</p>
+                    <p class="text-sm text-gray-500 mt-2">Model based on 48hr moving average air metrics (F7).</p>
+                </div>
+            `;
+            showModal('Pest & Disease Risk Analysis (F12)', resultHtml);
+        }
+        window.calculatePestRisk = calculatePestRisk;
+        
+        // --- FUNCTIONAL FEATURE 5: IRRIGATION SCHEDULER (F16) ---
+        window.toggleIrrigationScheduler = () => {
+            const statusElement = document.getElementById('irrigation-status');
+            const button = document.getElementById('irrigation-toggle-button');
+            const icon = button.querySelector('i');
+
+            if (isIrrigationActive) {
+                isIrrigationActive = false;
+                statusElement.textContent = 'Status: Manual Mode / Paused';
+                statusElement.className = 'text-lg font-bold text-red-600 mb-4';
+                button.innerHTML = '<i data-lucide="play" class="w-5 h-5 mr-3"></i> Resume Automated Cycle';
+                button.classList.replace('bg-teal', 'bg-red-600');
+                button.classList.replace('hover:bg-teal-dark', 'hover:bg-red-700');
+            } else {
+                isIrrigationActive = true;
+                statusElement.textContent = 'Status: Optimal Cycle Active';
+                statusElement.className = 'text-lg font-bold text-teal mb-4';
+                button.innerHTML = '<i data-lucide="pause" class="w-5 h-5 mr-3"></i> Pause Automated Cycle';
+                button.classList.replace('bg-red-600', 'bg-teal');
+                button.classList.replace('hover:bg-red-700', 'hover:bg-teal-dark');
+            }
+            lucide.createIcons();
+            showModal('Irrigation Scheduler (F16)', `Automated Irrigation is now ${isIrrigationActive ? 'RESUMED' : 'PAUSED'}. Current soil moisture levels will trigger the next cycle.`);
+        }
+        window.toggleIrrigationScheduler = toggleIrrigationScheduler;
+        
+        // --- FUNCTIONAL FEATURE 6: SOIL CARBON TRACKER (F18) ---
+        window.updateCarbonTracker = () => {
+            const currentAmount = parseFloat(document.getElementById('carbon-amount').textContent);
+            // Simulate a carbon sequestered increase based on a new plan
+            const newAmount = (currentAmount + 0.5 + Math.random() * 0.2).toFixed(2);
+            document.getElementById('carbon-amount').textContent = `${newAmount} T/ha`;
+            showModal('Carbon Sequestration (F18)', `Carbon score updated. Estimated sequestration increased to ${newAmount} T/ha based on recommended crop plan (F11).`);
+        }
+        window.updateCarbonTracker = updateCarbonTracker;
+        
+        // --- FUNCTIONAL FEATURE 7: HYPER-LOCAL WEATHER (F13) ---
+        window.showWeatherModal = () => {
+            const weatherData = [
+                { day: 'Today', temp: '32°C', icon: 'sun', rain: '5%' },
+                { day: 'Tomorrow', temp: '31°C', icon: 'cloud', rain: '10%' },
+                { day: 'Day 3', temp: '28°C', icon: 'cloud-rain', rain: '55%' },
+                { day: 'Day 4', temp: '26°C', icon: 'cloud-rain', rain: '70%' },
+                { day: 'Day 5', temp: '29°C', icon: 'cloud-sun', rain: '15%' },
+                { day: 'Day 6', temp: '30°C', icon: 'sun', rain: '5%' },
+                { day: 'Day 7', temp: '31°C', icon: 'sun', rain: '0%' }
+            ];
+            
+            const listHtml = weatherData.map(w => `
+                <div class="flex justify-between items-center p-3 border-b last:border-b-0">
+                    <span class="font-semibold">${w.day}</span>
+                    <i data-lucide="${w.icon}" class="w-5 h-5 text-cyan-600"></i>
+                    <span>${w.temp}</span>
+                    <span class="${w.rain.includes('50') ? 'text-red-600 font-bold' : 'text-gray-600'}">${w.rain} Rain</span>
+                </div>
+            `).join('');
+
+            showModal('7-Day Hyper-Local Weather Forecast (F13)', `<div class="mt-4">${listHtml}</div><p class="text-xs text-gray-500 mt-4">Accuracy priority: 90% confidence for next 48 hours.</p>`);
+        }
+        window.showWeatherModal = showWeatherModal;
+        
+        // --- FUNCTIONAL FEATURE 8: ML MODEL DEPLOYMENT (F20) ---
+        window.startMlDeployment = () => {
+            const button = document.getElementById('ml-deploy-button');
+            const progressBar = document.getElementById('ml-progress-bar');
+            const statusText = document.getElementById('ml-status-text');
+            
+            if (!button || button.disabled) return;
+
+            button.disabled = true;
+            button.textContent = 'Deploying... (0%)';
+            progressBar.style.width = '0%';
+            statusText.textContent = 'Validating model signature...';
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = `${progress}%`;
+                button.textContent = `Deploying... (${progress}%)`;
+                
+                if (progress === 40) {
+                    statusText.textContent = 'Transferring model to Edge Device...';
+                } else if (progress === 80) {
+                    statusText.textContent = 'Testing model inference on device...';
+                } else if (progress >= 100) {
+                    clearInterval(interval);
+                    statusText.textContent = 'Deployment Complete! Rice Yield v2.1 Model Active.';
+                    button.textContent = 'Deployment Successful';
+                    progressBar.style.backgroundColor = '#14b8a6'; // Teal
+                    button.disabled = false;
+                }
+            }, 500);
+        }
+        window.startMlDeployment = startMlDeployment;
+        
+        // --- FUNCTIONAL FEATURE 9: SENSOR CALIBRATION AUDIT (F06 Audit) ---
+        window.runCalibrationAudit = () => {
+            showModal('Sensor Calibration Audit (F06 Audit)', 'Running accuracy audit on device calibration settings...');
+            
+            setTimeout(() => {
+                const results = Math.random();
+                let resultText = '';
+                if (results > 0.8) {
+                    resultText = 'CRITICAL: pH and EC offsets have drifted significantly (3.5% drift). Recalibration is mandatory to maintain data accuracy.';
+                    showModal('Calibration Audit Failed', resultText);
+                } else if (results > 0.3) {
+                    resultText = 'WARNING: Minor drift detected (1.2% average). Recommended to cross-check with a manual soil test within 7 days.';
+                    showModal('Calibration Audit Warning', resultText);
+                } else {
+                    resultText = 'AUDIT PASSED: All sensor calibration offsets are within acceptable tolerance limits. Data accuracy maintained.';
+                    showModal('Calibration Audit Passed', resultText);
+                }
+            }, 1500);
+        }
+        window.runCalibrationAudit = runCalibrationAudit;
+        
+        // --- IOT CONSOLE FUNCTIONS (Features 2-10) ---
+
+        /**
+         * F2: Sub-Soil Profiling
+         * Loads simulated moisture and temp for different depths.
+         */
+        window.loadSoilProfile = (depth) => {
+             const profiles = {
+                '0-10': { moisture: '45%', temp: '32°C', color: 'text-cyan-700' },
+                '10-30': { moisture: '65%', temp: '28°C', color: 'text-blue-700' },
+                '30-60': { moisture: '75%', temp: '25°C', color: 'text-indigo-700' }
+            };
+            const profile = profiles[depth] || profiles['0-10'];
+            
+            const profileMoisture = document.getElementById('profile-moisture');
+            const profileTemp = document.getElementById('profile-temp');
+
+            if (profileMoisture && profileTemp) {
+                profileMoisture.textContent = profile.moisture;
+                profileTemp.textContent = profile.temp;
+                // Only update the color text utility classes
+                profileMoisture.className = `text-lg font-bold text-gray-800 flex justify-between ${profile.color}`;
+                profileTemp.className = `text-lg font-bold text-gray-800 flex justify-between ${profile.color}`;
+            }
+        };
+
+        /**
+         * F3: GPS-Tagged Data Logging
+         * Loads simulated log data for different fields.
+         */
+        window.loadFieldLog = (fieldId) => {
+            const logs = {
+                'A4': [
+                    `<li>[23:15] Lat: 26.91, Lon: 75.79 | pH: 6.8</li>`,
+                    `<li>[23:00] Lat: 26.91, Lon: 75.78 | Moist: 52%</li>`,
+                    `<li>[22:45] Lat: 26.90, Lon: 75.79 | EC: 0.7</li>`,
+                    `<li>[22:30] Lat: 26.90, Lon: 75.78 | Temp: 28°C</li>`
+                ],
+                'B1': [
+                    `<li class="text-red-600 font-semibold">[23:10] CRITICAL: Moist: 88% (Waterlogged)</li>`,
+                    `<li>[23:00] Lat: 27.10, Lon: 75.90 | pH: 7.2</li>`,
+                    `<li>[22:45] Lat: 27.10, Lon: 75.91 | EC: 0.5</li>`,
+                    `<li>[22:30] Lat: 27.09, Lon: 75.90 | Temp: 27°C</li>`
+                ],
+                'C7': [
+                    `<li class="text-amber-600 font-semibold">[23:05] WARNING: EC: 2.1 dS/m (High Salinity)</li>`,
+                    `<li>[22:50] Lat: 26.55, Lon: 76.01 | pH: 7.8</li>`,
+                    `<li>[22:35] Lat: 26.54, Lon: 76.00 | Moist: 35%</li>`,
+                    `<li>[22:20] Lat: 26.55, Lon: 76.01 | NPK: Low K</li>`
+                ]
+            };
+            const logList = document.getElementById('gps-data-log');
+            if (logList) {
+                logList.innerHTML = `<li class="font-bold">Latest 5 Records for Field ${fieldId}:</li>` + (logs[fieldId] || logs['A4']).join('');
+            }
+        };
+
+
+        /**
+         * F4: OTA Firmware Updates
+         * Simulates an Over-The-Air firmware update process.
+         */
+        window.startOtaUpdate = () => {
+            const button = document.getElementById('ota-update-button');
+            const progressBar = document.getElementById('ota-progress-bar');
+            const statusText = document.getElementById('ota-status-text');
+            
+            if (!button || button.disabled) return;
+
+            button.disabled = true;
+            button.textContent = 'Updating... (0%)';
+            progressBar.style.width = '0%';
+            statusText.textContent = 'Preparing download...';
+            progressBar.style.backgroundColor = '#4F46E5'; // Default Indigo
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = `${progress}%`;
+                button.textContent = `Updating... (${progress}%)`;
+                
+                if (progress === 40) {
+                    statusText.textContent = 'Downloading firmware package...';
+                } else if (progress === 80) {
+                    statusText.textContent = 'Flashing device memory...';
+                } else if (progress >= 100) {
+                    clearInterval(interval);
+                    statusText.textContent = 'Update Complete! Device rebooted.';
+                    button.textContent = 'Update Successful';
+                    progressBar.style.backgroundColor = '#10B981'; // Green
+                    button.disabled = false;
+                }
+            }, 500);
+        };
+
+        /**
+         * F5: Offline Data Sync
+         * Simulates network loss and subsequent sync when back online.
+         */
+        window.simulateNetworkLoss = () => {
+            const networkStatus = document.getElementById('network-status');
+            const records = document.getElementById('offline-records');
+            if (!networkStatus || !records) return;
+
+            const originalRecords = parseInt(records.textContent, 10);
+
+            // Simulate loss
+            networkStatus.textContent = 'OFFLINE (Local Mode)';
+            networkStatus.classList.remove('text-teal');
+            networkStatus.classList.add('text-red-600');
+            
+            showModal('Network Loss Simulated', 'Device has switched to LoRaWAN Offline Mode (F5). Data will queue locally.');
+
+            // Simulate accumulating 50 records offline
+            setTimeout(() => {
+                records.textContent = originalRecords + 50;
+                // Simulate reconnection and sync
+                setTimeout(() => {
+                    networkStatus.textContent = 'SYNCING...';
+                    networkStatus.classList.remove('text-red-600');
+                    networkStatus.classList.add('text-amber-600');
+                    
+                    setTimeout(() => {
+                        networkStatus.textContent = 'ONLINE (Synced)';
+                        networkStatus.classList.remove('text-amber-600');
+                        networkStatus.classList.add('text-teal');
+                        showModal('Sync Complete', `Successfully synced 50 new records to the cloud.`);
+                    }, 2000);
+                }, 3000); 
+
+            }, 2000);
+        };
+
+        /**
+         * F6: Custom Sensor Calibration
+         * Simulates saving new calibration offsets.
+         */
+        window.saveCalibration = () => {
+            const phOffset = document.getElementById('ph-offset')?.value;
+            const ecMultiplier = document.getElementById('ec-multiplier')?.value;
+            
+            if (!phOffset || !ecMultiplier) return;
+
+            showModal('Calibration Saved', `New Calibration Settings pushed to device:<br>pH Offset: ${phOffset}<br>EC Multiplier: ${ecMultiplier}<br><br>Readings will adjust immediately. (F6)`);
+        };
+
+        /**
+         * F8: Automated Data Redundancy Backups
+         * Simulates forcing an immediate backup.
+         */
+        window.forceBackup = () => {
+            const status = document.getElementById('backup-status');
+            if (!status) return;
+
+            status.textContent = 'Backup in Progress...';
+            status.classList.remove('text-teal');
+            status.classList.add('text-indigo-600');
+
+            setTimeout(() => {
+                const now = new Date().toLocaleTimeString();
+                status.textContent = `Last Backup: Complete (${now})`;
+                status.classList.remove('text-indigo-600');
+                status.classList.add('text-teal');
+                showModal('Backup Complete (F8)', 'Full data redundancy backup saved to secure cloud storage.');
+            }, 1500);
+        };
+
+        /**
+         * F9: Historical Data Trends
+         * Simulates switching the displayed analysis trend.
+         */
+        window.changeTrendData = (trend) => {
+            const output = document.getElementById('trend-analysis-output');
+            if (!output) return;
+
+            let analysis = "";
+            const selectElement = document.getElementById('trend-data-select');
+            
+            if (trend === 'NPK') {
+                analysis = "Analysis: P & K remained stable, N showed seasonal dip.";
+            } else if (trend === 'Moisture') {
+                analysis = "Analysis: High correlation between irrigation schedules and moisture recovery. System optimization validated.";
+            } else if (trend === 'pHEC') {
+                analysis = "Analysis: pH showed a slight neutralizing trend, EC remained stable, indicating healthy long-term soil health.";
+            }
+            output.innerHTML = `Showing ${selectElement?.options[selectElement.selectedIndex]?.text || 'N/A'}<br><span class="text-sm text-gray-600 mt-1">${analysis}</span>`;
+        };
+
+        /**
+         * F10: Low-Power Mode
+         * Toggles the low power mode setting.
+         */
+        window.togglePowerMode = (isChecked) => {
+            const desc = document.getElementById('power-mode-desc');
+            if (!desc) return;
+
+            if (isChecked) {
+                desc.textContent = 'Current: Low-Power Mode (Battery life extended by 40%. Data transmission frequency reduced.)';
+                desc.classList.add('text-red-700');
+            } else {
+                desc.textContent = 'Current: Standard Performance (High frequency data transmission. Optimal for daily monitoring.)';
+                desc.classList.remove('text-red-700');
+            }
+        };
+
+        // --- Initialization on load ---
+        window.initApp = () => {
+            const langSelect = document.getElementById('language-select');
+            const defaultLang = langSelect.value;
+            
+            // 1. Initial page load must show 'home'
+            showPage('home'); 
+
+            // 2. Update UI based on language
+            updateUI(defaultLang);
+            
+            // 3. Start Firebase Listeners (must be called once)
+            window.startDataListener();
+
+            // 4. Initialize IoT Console defaults (conditional check for elements)
+            if(document.getElementById('soil-depth-select')) {
+                window.loadSoilProfile(document.getElementById('soil-depth-select').value);
+            }
+            if(document.getElementById('field-log-select')) {
+                window.loadFieldLog(document.getElementById('field-log-select').value);
+            }
+            if(document.getElementById('trend-data-select')) {
+                window.changeTrendData(document.getElementById('trend-data-select').value);
+            }
+            if(document.getElementById('power-mode-toggle')) {
+                 window.togglePowerMode(document.getElementById('power-mode-toggle').checked);
+            }
+            // 5. Initialize irrigation scheduler status
+            window.toggleIrrigationScheduler(); 
+            window.toggleIrrigationScheduler(); // Call twice to ensure status is set to active (default) on first load
+        }
+
+        // Dummy initial setup data
+        window.updateDashboard({ pH: 7.0, moisture: 45, NPK: "Optimal N/P/K", EC: 0.8 }, new Date().toLocaleString());
+
+        // Modal/Message box utility (replaces alert())
+        function showModal(title, content) {
+            const existingModal = document.getElementById('custom-modal');
+            if (existingModal) existingModal.remove();
+
+            const modalHtml = `
+                <div id="custom-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[999]">
+                    <div class="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full border-t-4 border-teal">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i data-lucide="info" class="w-6 h-6 mr-3 text-teal"></i>
+                            ${title}
+                        </h3>
+                        <div class="modal-content-area text-lg">
+                            ${typeof content === 'string' ? `<p class="text-gray-600 mb-4">${content}</p>` : content}
+                        </div>
+                        <button onclick="document.getElementById('custom-modal').remove()" class="bg-teal hover:bg-teal-dark text-white font-bold py-2 px-4 rounded-lg transition shadow-md mt-4">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            lucide.createIcons();
+        }
+
+    </script>
+</body>
+</html>
